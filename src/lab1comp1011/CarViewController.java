@@ -7,7 +7,10 @@ package lab1comp1011;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TableColumn;
 
 /**
  * FXML Controller class
@@ -15,13 +18,24 @@ import javafx.fxml.Initializable;
  * @author user
  */
 public class CarViewController implements Initializable {
-
+    @FXML private TableColumn<?, ?> makeColumn;
+    @FXML private TableColumn<?, ?> modelColumn;
+    @FXML private TableColumn<?, ?> yearColumn;
+    @FXML private TableColumn<?, ?> mileageColumn;
+    @FXML private Slider minYearSlider;
+    @FXML private Slider maxYearSlider;
+    
+    
+    
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        this.minYearSlider.setMin(2010);
+        this.minYearSlider.setMax(2017);
+        this.maxYearSlider.setMin(2017);
+        this.maxYearSlider.setMax(2018);
     }    
     
 }
