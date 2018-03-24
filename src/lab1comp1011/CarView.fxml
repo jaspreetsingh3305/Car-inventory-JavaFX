@@ -14,7 +14,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab1comp1011.CarViewController">
    <children>
-      <TableView layoutX="31.0" layoutY="214.0" prefHeight="172.0" prefWidth="516.0">
+      <TableView fx:id="tableView" layoutX="31.0" layoutY="214.0" prefHeight="172.0" prefWidth="516.0">
         <columns>
           <TableColumn fx:id="makeColumn" prefWidth="142.0" text="Make" />
           <TableColumn fx:id="modelColumn" prefWidth="159.0" text="Model" />

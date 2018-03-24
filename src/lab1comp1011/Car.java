@@ -51,5 +51,12 @@ public class Car {
 
     public void setMileage(double mileage) {
         this.mileage = mileage;
+ 
     }
+  
+  @Override
+    public String toString(){
+        return this.make+this.model+this.year+this.mileage;
+    }
+    
 }

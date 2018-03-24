@@ -31,16 +31,15 @@ import javafx.scene.control.cell.PropertyValueFactory;
  * @author user
  */
 public class CarViewController implements Initializable {
-    private TableView<Car> tableView;
-    @FXML private TableColumn<?, ?> makeColumn;
-    @FXML private TableColumn<?, ?> modelColumn;
-    @FXML private TableColumn<?, ?> yearColumn;
-    @FXML private TableColumn<?, ?> mileageColumn;
+   @FXML private TableView<Car> tableView;
+    @FXML private TableColumn<Car, String> makeColumn;
+    @FXML private TableColumn<Car, String> modelColumn;
+    @FXML private TableColumn<Car,Integer> yearColumn;
+    @FXML private TableColumn<Car, Double> mileageColumn;
     @FXML private Slider minYearSlider;
     @FXML private Slider maxYearSlider;
     @FXML private Label minYearLabel;
     @FXML private Label maxYearLabel;
-    @FXML private Label Label;
     @FXML private ComboBox<String> brandComboBox;
     
     
@@ -62,29 +61,44 @@ public class CarViewController implements Initializable {
         this.maxYearSlider.setMax(2018);
         this.maxYearSlider.setValue(2018);
         this.maxYearLabel.setText(Integer.toString((int)maxYearSlider.getValue()));
+        
+        this.makeColumn.setCellValueFactory(
+                new PropertyValueFactory<Car, String>("make"));
+        this.modelColumn.setCellValueFactory(
+                new PropertyValueFactory<Car, String>("model"));
+        this.yearColumn.setCellValueFactory(
+                new PropertyValueFactory<Car,Integer>("year"));
+        this.mileageColumn.setCellValueFactory(
+                new PropertyValueFactory<Car, Double>("mileage"));
+     
+        
         try {
             loadData();
              loadComboBox();
         } catch (SQLException ex) {
-            Logger.getLogger(CarViewController.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println(ex.getMessage()+ex.getSQLState());
         }
          brandComboBox.getSelectionModel().selectFirst();
        
         
     }
-  public void maxYearSliderMoved()
+  public void maxYearSliderMoved() throws SQLException
     {
         String label = String.format("%.0f", maxYearSlider.getValue());
         maxYearLabel.setText(label);
+        UpdateTableWithSliders();
     }    
-  public void minYearSliderMoved()
+  public void minYearSliderMoved() throws SQLException
     {
         String label = String.format("%.0f", minYearSlider.getValue());
         minYearLabel.setText(label);
+        UpdateTableWithSliders();
        
     }  
      public void loadData() throws SQLException{
+         
          ObservableList<Car> cars = FXCollections.observableArrayList();
+         
         //get the Phone data from the database
         Connection conn = null;
         Statement statement = null;
@@ -112,16 +126,17 @@ public class CarViewController implements Initializable {
                     resultSet.getString("model"),
                     resultSet.getInt("year"),
                     resultSet.getDouble("mileage"));
-            cars.add(newCar);
+                
+                    cars.add(newCar);
                
             }
-            
-           // tableView.getItems().addAll(cars);
+           
+         tableView.getItems().addAll(cars);
             
         }
         catch (SQLException e)
         {
-            System.err.println(e);
+            System.err.println(e.getMessage());
         }
         finally
         {
@@ -132,14 +147,10 @@ public class CarViewController implements Initializable {
             if (resultSet != null)
                 resultSet.close();
         }
-        
-            
-         
-     
+   
      }
      
-     
-     
+   
      public void loadComboBox() throws SQLException{
          ObservableList<ResultSet> cars = FXCollections.observableArrayList();
         //get the Phone data from the database
@@ -187,5 +198,62 @@ public class CarViewController implements Initializable {
             
          
      
+     }
+
+public void UpdateTableWithSliders() throws SQLException{
+    
+        this.tableView.getItems().clear();
+         ObservableList<Car> cars = FXCollections.observableArrayList();
+         
+        //get the Phone data from the database
+        Connection conn = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+     
+        
+        try{
+            //1. connect to the DB with the URL to the db, user name and password
+            conn = DriverManager.getConnection("jdbc:mysql://aws.computerstudi.es:3306/"
+                    + "gc200360513", "gc200360513", "nUDgkNa2zj");
+            
+            //2.create a statement object to execute on the DB
+            statement = conn.createStatement();
+            
+            //3. create & execute the SQL query
+            resultSet = statement.executeQuery("SELECT * FROM cars WHERE year BETWEEN "
+                    +minYearSlider.getValue()+" AND "+maxYearSlider.getValue());
+            
+
+            
+            //5.  Loop over the result set and display to the screen
+            while (resultSet.next())
+            {
+                Car newCar=new Car(
+                    resultSet.getString("make"),
+                    resultSet.getString("model"),
+                    resultSet.getInt("year"),
+                    resultSet.getDouble("mileage"));
+                
+                    cars.add(newCar);
+               
+            }
+
+      tableView.getItems().addAll(cars);
+            
+        }
+        catch (SQLException e)
+        {
+            System.err.println(e.getMessage());
+        }
+        finally
+        {
+            if (conn != null)
+                conn.close();
+            if (statement != null)
+                statement.close();
+            if (resultSet != null)
+                resultSet.close();
+        }
+   
      }
 }
