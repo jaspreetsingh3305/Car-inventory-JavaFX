@@ -99,26 +99,19 @@ public class CarViewController implements Initializable {
          
          ObservableList<Car> cars = FXCollections.observableArrayList();
          
-        //get the Phone data from the database
         Connection conn = null;
         Statement statement = null;
         ResultSet resultSet = null;
      
         
         try{
-            //1. connect to the DB with the URL to the db, user name and password
             conn = DriverManager.getConnection("jdbc:mysql://aws.computerstudi.es:3306/"
                     + "gc200360513", "gc200360513", "nUDgkNa2zj");
             
-            //2.create a statement object to execute on the DB
             statement = conn.createStatement();
             
-            //3. create & execute the SQL query
             resultSet = statement.executeQuery("SELECT * FROM cars");
             
-
-            
-            //5.  Loop over the result set and display to the screen
             while (resultSet.next())
             {
                 Car newCar=new Car(
@@ -153,31 +146,25 @@ public class CarViewController implements Initializable {
    
      public void loadComboBox() throws SQLException{
          ObservableList<ResultSet> cars = FXCollections.observableArrayList();
-        //get the Phone data from the database
         Connection conn = null;
         Statement statement = null;
         ResultSet resultSet = null;
      
         
         try{
-            //1. connect to the DB with the URL to the db, user name and password
             conn = DriverManager.getConnection("jdbc:mysql://aws.computerstudi.es:3306/"
                     + "gc200360513", "gc200360513", "nUDgkNa2zj");
             
-            //2.create a statement object to execute on the DB
             statement = conn.createStatement();
             
-            //3. create & execute the SQL query
             resultSet = statement.executeQuery("SELECT DISTINCT make FROM cars");
             
 
             
-            //5.  Loop over the result set and display to the screen
             while (resultSet.next())
             {
             brandComboBox.getItems().addAll(resultSet.getString("make"));
-            
-           // cars.add(resultSet);
+          
             }
                     
         }
@@ -205,27 +192,27 @@ public void UpdateTableWithSliders() throws SQLException{
         this.tableView.getItems().clear();
          ObservableList<Car> cars = FXCollections.observableArrayList();
          
-        //get the Phone data from the database
         Connection conn = null;
         Statement statement = null;
         ResultSet resultSet = null;
-     
-        
+
         try{
-            //1. connect to the DB with the URL to the db, user name and password
             conn = DriverManager.getConnection("jdbc:mysql://aws.computerstudi.es:3306/"
                     + "gc200360513", "gc200360513", "nUDgkNa2zj");
             
-            //2.create a statement object to execute on the DB
             statement = conn.createStatement();
             
-            //3. create & execute the SQL query
+            if(brandComboBox.getValue()!=null){
+                
+            resultSet = statement.executeQuery("SELECT * FROM cars WHERE year BETWEEN "
+                    +minYearSlider.getValue()+" AND "+maxYearSlider.getValue()+
+                    " AND make='"+this.brandComboBox.getValue()+"'");
+            }
+            else{
+                
             resultSet = statement.executeQuery("SELECT * FROM cars WHERE year BETWEEN "
                     +minYearSlider.getValue()+" AND "+maxYearSlider.getValue());
-            
-
-            
-            //5.  Loop over the result set and display to the screen
+            }
             while (resultSet.next())
             {
                 Car newCar=new Car(
@@ -235,11 +222,9 @@ public void UpdateTableWithSliders() throws SQLException{
                     resultSet.getDouble("mileage"));
                 
                     cars.add(newCar);
-               
-            }
 
-      tableView.getItems().addAll(cars);
-            
+            }
+            tableView.getItems().addAll(cars);
         }
         catch (SQLException e)
         {
