@@ -36,7 +36,7 @@ import javafx.stage.Stage;
  * @author user
  */
 public class CarViewController implements Initializable {
-   @FXML private TableView<Car> tableView;
+    @FXML private TableView<Car> tableView;
     @FXML private TableColumn<Car, String> makeColumn;
     @FXML private TableColumn<Car, String> modelColumn;
     @FXML private TableColumn<Car,Integer> yearColumn;
@@ -46,7 +46,6 @@ public class CarViewController implements Initializable {
     @FXML private Label minYearLabel;
     @FXML private Label maxYearLabel;
     @FXML private ComboBox<String> brandComboBox;
-    
     
     
     /**
@@ -75,7 +74,6 @@ public class CarViewController implements Initializable {
                 new PropertyValueFactory<Car,Integer>("year"));
         this.mileageColumn.setCellValueFactory(
                 new PropertyValueFactory<Car, Double>("mileage"));
-     
         
         try {
             loadData();
@@ -83,24 +81,24 @@ public class CarViewController implements Initializable {
         } catch (SQLException ex) {
             System.err.println(ex.getMessage()+ex.getSQLState());
         }
-         brandComboBox.getSelectionModel().selectFirst();
+         brandComboBox.getSelectionModel().select("Select");
        
         
     }
-  public void maxYearSliderMoved() throws SQLException
+    public void maxYearSliderMoved() throws SQLException
     {
         String label = String.format("%.0f", maxYearSlider.getValue());
         maxYearLabel.setText(label);
         UpdateTableWithSliders();
     }    
-  public void minYearSliderMoved() throws SQLException
+    public void minYearSliderMoved() throws SQLException
     {
         String label = String.format("%.0f", minYearSlider.getValue());
         minYearLabel.setText(label);
         UpdateTableWithSliders();
        
     }  
-     public void loadData() throws SQLException{
+    public void loadData() throws SQLException{
          
          ObservableList<Car> cars = FXCollections.observableArrayList();
          
@@ -148,8 +146,7 @@ public class CarViewController implements Initializable {
    
      }
      
-   
-     public void loadComboBox() throws SQLException{
+    public void loadComboBox() throws SQLException{
          ObservableList<ResultSet> cars = FXCollections.observableArrayList();
         Connection conn = null;
         Statement statement = null;
@@ -174,7 +171,7 @@ public class CarViewController implements Initializable {
                     
         }
         catch (SQLException e)
-        {
+        { 
             System.err.println(e);
         }
         finally
@@ -186,16 +183,14 @@ public class CarViewController implements Initializable {
             if (resultSet != null)
                 resultSet.close();
         }
-        
-            
-         
+      
      
      }
 
-public void UpdateTableWithSliders() throws SQLException{
+    public void UpdateTableWithSliders() throws SQLException{
     
         this.tableView.getItems().clear();
-         ObservableList<Car> cars = FXCollections.observableArrayList();
+        ObservableList<Car> cars = FXCollections.observableArrayList();
          
         Connection conn = null;
         Statement statement = null;
@@ -207,7 +202,7 @@ public void UpdateTableWithSliders() throws SQLException{
             
             statement = conn.createStatement();
             
-            if(brandComboBox.getValue()!=null){
+            if(brandComboBox.getValue()!=null && brandComboBox.getValue()!="Select"){
                 
             resultSet = statement.executeQuery("SELECT * FROM cars WHERE year BETWEEN "
                     +minYearSlider.getValue()+" AND "+maxYearSlider.getValue()+
@@ -245,6 +240,7 @@ public void UpdateTableWithSliders() throws SQLException{
                 resultSet.close();
         }
 }
+
     public void changeScene(ActionEvent event) throws IOException{
     
      FXMLLoader loader=new FXMLLoader();
@@ -253,10 +249,26 @@ public void UpdateTableWithSliders() throws SQLException{
      
      Scene scene = new Scene(parent);
      Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-     stage.setTitle("");
+     stage.setTitle("Qoute");
      stage.setScene(scene);
      stage.show();
-         
     
     }
+    
+    public void clearFilters(){
+        
+        this.minYearSlider.setValue(2010);
+        this.maxYearSlider.setValue(2018);
+       
+        try {
+                loadData();
+                loadComboBox();
+            }
+        catch(SQLException ex) {
+                System.err.println(ex.getMessage()+ex.getSQLState());
+            }
+        brandComboBox.getSelectionModel().select("Select");
+       
+    }
+    
      }

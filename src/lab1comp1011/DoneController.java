@@ -31,9 +31,10 @@ public class DoneController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        imageView.setImage(new Image("file:./src/image/image.jpg"));
+        imageView.setImage(new Image("file:./src/image/guru-nanak.jpg"));
     }    
-        public void changeScene(ActionEvent event) throws IOException{
+       
+    public void changeScene(ActionEvent event) throws IOException{
     
      FXMLLoader loader=new FXMLLoader();
      loader.setLocation(getClass().getResource("CarView.fxml"));
